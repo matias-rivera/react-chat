@@ -3,10 +3,24 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { BrowserRouter,Switch,Route } from 'react-router-dom';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+
+import 'semantic-ui-css/semantic.min.css';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+  <BrowserRouter>
+    <Switch>
+      
+      <Route path="/login" component={Login} />
+      <Route path="/register" component={Register} />
+      <Route path="/" exact component={App} />
+    </Switch>
+  </BrowserRouter>
+ 
+   
   </React.StrictMode>,
   document.getElementById('root')
 );
