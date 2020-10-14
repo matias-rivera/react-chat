@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Grid, Header, Icon, Dropdown, Image} from 'semantic-ui-react';
+import {Grid, Header, Dropdown, Image} from 'semantic-ui-react';
 import firebase from './../../firebase/init';
 
 
@@ -36,12 +36,11 @@ class UserPanel extends Component {
 
         const {user} = this.state;
         return ( 
-            <Grid style={{background: '#4c3c4c'}}>
+            <Grid >
                 <Grid.Column>
                     <Grid.Row style={{padding: '1.2em', margin:0}}>
                         <Header inverted floated="left" as="h2">
-                            <Icon name="code"/>
-                            <Header.Content>DevChat</Header.Content>
+                            <Header.Content><Image src='./logo.png' avatar />Discord</Header.Content>
                         </Header>
                         <Header style={{padding: '0.25em'}} as="h4" inverted>
                             <Dropdown 

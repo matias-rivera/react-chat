@@ -7,7 +7,7 @@ class MessagesHeader extends Component {
     state = {  }
     render() { 
         return ( 
-            <Segment clearing>
+            <Segment clearing >
 
                 <Header
                     fluid="true"
