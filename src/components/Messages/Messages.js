@@ -12,7 +12,8 @@ class Messages extends React.Component {
         channel: this.props.currentChannel,
         user: this.props.currentUser,
         messagesLoading: true,
-        messages: []
+        messages: [],
+        progressBar: false
     }
 
     //when component is mount load all messages 
@@ -55,15 +56,22 @@ class Messages extends React.Component {
         )))
     }
 
+    //check if is uploading, then set progressbar to true
+    isProgressBarVisible = percent => {
+        if(percent > 0){
+            this.setState({progressBar: true})
+        }
+    }
+
     render() {
-        const {messagesRef, messages, channel, user} = this.state;
+        const {messagesRef, messages, channel, user, progressBar} = this.state;
         return (
             <React.Fragment>
                 <MessagesHeader />
 
                 <Segment>
                     <Comment.Group 
-                        className="messages">
+                        className={progressBar ? 'messages__progress' : 'messages'}>
                             {this.displayMessages(messages)}
                 
                     </Comment.Group>
@@ -73,6 +81,7 @@ class Messages extends React.Component {
                     messagesRef={messagesRef}
                     currentChannel={channel}
                     currentUser= {user}
+                    isProgressBarVisible={this.isProgressBarVisible}
                 
                 />
         </React.Fragment>
