@@ -13,7 +13,11 @@ class Messages extends React.Component {
         user: this.props.currentUser,
         messagesLoading: true,
         messages: [],
-        progressBar: false
+        progressBar: false,
+        numUniqueUsers: '',
+        searchTerm: '',
+        searchLoading: false,
+        searchResults: []
     }
 
     //when component is mount load all messages 
@@ -42,8 +46,49 @@ class Messages extends React.Component {
             messages: loadedMessages,
             messagesLoading: false
           });
+          this.countUniqueUsers(loadedMessages);
         });
       };
+
+    //get search input 
+    handleSearchChange = event => {
+        this.setState({
+            searchTerm: event.target.value,
+            searchLoading: true
+        }, () => this.handleSearchMessages())
+    }
+
+    //search for messages using searchTerm
+    handleSearchMessages = () => {
+        const channelMessages = [...this.state.messages];
+        const regex = new RegExp(this.state.searchTerm, 'gi');
+        //get all related messages
+        const searchResults = channelMessages.reduce((acc, message) => {
+            if(message.content && message.content.match(regex) || message.user.name.match(regex)){
+                acc.push(message);
+            }
+            return acc;
+        }, []);
+        //return searched messages
+        this.setState({ searchResults });
+        setTimeout(() => this.setState({ searchLoading: false }), 1000);
+    }
+
+    //count users in channel 
+    countUniqueUsers = messages => {
+        //get users
+        const uniqueUsers = messages.reduce((acc, message) => {
+        if (!acc.includes(message.user.name)){
+            acc.push(message.user.name)
+        }
+        return acc;
+        },[]);
+        //check if there is 1 or more users
+        const plural = uniqueUsers.length > 1 || uniqueUsers.length === 0
+        //display users numbers
+        const numUniqueUsers = `${uniqueUsers.length} user${plural ? 's' : ''}`;
+        this.setState({ numUniqueUsers })
+    }
 
     //loop for displaying messages
     displayMessages = messages => {
@@ -56,6 +101,8 @@ class Messages extends React.Component {
         )))
     }
 
+    displayChannelName = channel => channel ? `#${channel.name}` : '';
+
     //check if is uploading, then set progressbar to true
     isProgressBarVisible = percent => {
         if(percent > 0){
@@ -64,15 +111,21 @@ class Messages extends React.Component {
     }
 
     render() {
-        const {messagesRef, messages, channel, user, progressBar} = this.state;
+        const {messagesRef, messages, channel, user, progressBar, numUniqueUsers, searchTerm, searchResults, searchLoading} = this.state;
         return (
             <React.Fragment>
-                <MessagesHeader />
+                <MessagesHeader 
+                    channelName={this.displayChannelName(channel)}
+                    numUniqueUsers={numUniqueUsers}
+                    handleSearchChange={this.handleSearchChange}
+                    searchLoading={searchLoading}
+                />
 
                 <Segment>
                     <Comment.Group 
                         className={progressBar ? 'messages__progress' : 'messages'}>
-                            {this.displayMessages(messages)}
+                        {searchTerm ? this.displayMessages(searchResults) 
+                        : this.displayMessages(messages)}
                 
                     </Comment.Group>
                 </Segment>
